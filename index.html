@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yareuu</title>
+  <style>
+    * { box-sizing: border-box; }
+    body, html {
+      margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(to bottom, #87CEFA, #B0E0E6);
+      filter: blur(8px);
+      z-index: -1;
+    }
+    .centered {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+      color: white;
+      backdrop-filter: brightness(0.8) contrast(1.1);
+      text-shadow: 1px 1px 2px #7c0aff;
+    }
+    h1, h2 {
+      color: white;
+      text-shadow: 1px 1px 2px #360dee;
+    }
+    button {
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: rgba(0, 17, 255, 0.8);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
+      font-weight: bold;
+    }
+    button:hover { background-color: rgb(46, 7, 129); }
+    .halaman { display: none; }
+    #halaman1 { display: flex; }
+
+    #puzzle {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      width: 90vw;
+      max-width: 360px;
+      aspect-ratio: 1 / 1;
+      gap: 2px;
+    }
+    #puzzle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: 2px solid white;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    #akhir img {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 250px;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    #akhir textarea {
+      margin-top: 30px;
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 1rem;
+      border: 1px solid pink;
+      resize: vertical;
+      width: 100%;
+      height: 300px;
+      line-height: 1.6;
+      background-color: rgba(255, 255, 255, 0.85);
+      color: #ff69b4;
+    }
+    #popup {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 5, 47, 0.9);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 15px;
+      font-size: 1.2rem;
+      box-shadow: 0 0 20px rgba(255, 0, 38, 0.8);
+      z-index: 9999;
+      text-shadow: 1px 1px 2px #c46666;
+    }
+
+    /* Tombol Musik */
+    #music-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px rgba(0,0,0,0.3);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <audio id="bg-music" autoplay loop>
+    <source src="lagu.mp3" type="audio/mpeg">
+  </audio>
+  <button id="music-toggle">🔊</button>
+  <div id="popup">Stress!</div>
+
+  <div id="halaman1" class="centered halaman">
+    <h1>Hai Vone,Kei & Bento</h1>
+    <button onclick="mulaiKuis()">Yareuu</button>
+  </div>
+
+  <div id="halaman2" class="centered halaman">
+    <h2>Dimana pertama kali kita ketemu?</h2>
+    <button onclick="cekJawaban('A', 'B', 'halaman2', 'halaman3')">A. map Lembayana</button>
+    <button onclick="cekJawaban('B', 'B', 'halaman2', 'halaman3')">B. map Sibuatan</button>
+    <button onclick="cekJawaban('C', 'B', 'halaman2', 'halaman3')">C. map Horror</button>
+  </div>
+
+  <div id="halaman3" class="centered halaman">
+    <h2>Kata-kata yang sering diucapin kalo salah satu dari kita mulai kena mental?</h2>
+    <button onclick="cekJawaban('A', 'C', 'halaman3', 'halaman4')">A. Ayo bisaa</button>
+    <button onclick="cekJawaban('B', 'C', 'halaman3', 'halaman4')">B. Mau digendong aja?</button>
+    <button onclick="cekJawaban('C', 'C', 'halaman3', 'halaman4')">C. Panggil nama "aman"?</button>
+  </div>
+
+  <div id="halaman4" class="centered halaman">
+    <h2>Di map mana kita pertama kali mulai saling ngobrol?</h2>
+    <button onclick="cekJawaban('A', 'A', 'halaman4', 'halaman5')">A. map Lembayana</button>
+    <button onclick="cekJawaban('B', 'A', 'halaman4', 'halaman5')">B. map CDID</button>
+    <button onclick="cekJawaban('C', 'A', 'halaman4', 'halaman5')">C. map Daun</button>
+  </div>
+
+  <div id="halaman5" class="centered halaman">
+    <h2>Siapa yang paling sering DC?</h2>
+    <button onclick="cekJawaban('A', 'A', 'halaman5', 'halaman6')">A. Vone</button>
+    <button onclick="cekJawaban('B', 'A', 'halaman5', 'halaman6')">B. Kei</button>
+    <button onclick="cekJawaban('C', 'A', 'halaman5', 'halaman6')">C. Bang Bento</button>
+    <button onclick="cekJawaban('D', 'A', 'halaman5', 'halaman6')">D. Huksy</button>
+  </div>
+
+  <div id="halaman6" class="centered halaman">
+    <h2>Siapa yang paling sering rendering nya telat?</h2>
+    <button onclick="cekJawaban('A', 'B', 'halaman6', 'halaman7')">A. Vone</button>
+    <button onclick="cekJawaban('B', 'B', 'halaman6', 'halaman7')">B. Kei</button>
+    <button onclick="cekJawaban('C', 'B', 'halaman6', 'halaman7')">C. Bang Bento</button>
+    <button onclick="cekJawaban('D', 'B', 'halaman6', 'halaman7')">D. Huksy</button>
+  </div>
+
+  <div id="halaman7" class="centered halaman">
+    <h2>Siapa yang hobi menggatal?</h2>
+    <button onclick="cekJawaban('A', 'C', 'halaman7', 'halaman8')">A. Vone</button>
+    <button onclick="cekJawaban('B', 'C', 'halaman7', 'halaman8')">B. Kei</button>
+    <button onclick="cekJawaban('C', 'C', 'halaman7', 'halaman8')">C. Bang Bento</button>
+    <button onclick="cekJawaban('D', 'C', 'halaman7', 'halaman8')">D. Huksy</button>
+  </div>
+
+  <div id="halaman8" class="centered halaman">
+    <h2>Siapa yang paling jago?</h2>
+    <button onclick="cekJawaban('A', 'D', 'halaman8', 'halaman9')">A. Vone</button>
+    <button onclick="cekJawaban('B', 'D', 'halaman8', 'halaman9')">B. Kei</button>
+    <button onclick="cekJawaban('C', 'D', 'halaman8', 'halaman9')">C. Bang Bento</button>
+    <button onclick="cekJawaban('D', 'D', 'halaman8', 'halaman9')">D. Huksy</button>
+  </div>
+
+  <div id="halaman9" class="centered halaman">
+    <h2>Susun puzzle time!</h2>
+    <div id="puzzle"></div>
+  </div>
+
+  <div id="akhir" class="centered halaman">
+    <h2>Sedikit video untuk kalian, jangan lupa mute lagu nya dulu</h2>
+    <video controls autoplay style="max-width: 300px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.3);">
+      <source src="0914.mp4" type="video/mp4">
+      Browser kamu tidak mendukung video.
+    </video>
+    <h2>from Huksy</h2>
+  </div>
+
+  <script>
+    const musik = document.getElementById("bg-music");
+    const popup = document.getElementById("popup");
+    const musicToggle = document.getElementById("music-toggle");
+
+    musicToggle.addEventListener("click", () => {
+      if (musik.volume === 0) {
+        musik.volume = 1;
+        musicToggle.textContent = "🔊";
+      } else {
+        musik.volume = 0;
+        musicToggle.textContent = "🔇";
+      }
+    });
+
+    function showPopup(text = 'Stress!', duration = 2000) {
+      popup.innerText = text;
+      popup.style.display = 'block';
+      setTimeout(() => popup.style.display = 'none', duration);
+    }
+
+    function mulaiKuis() {
+      musik.play().catch(()=>{});
+      keHalaman('halaman2');
+    }
+
+    function keHalaman(idTujuan) {
+      document.querySelectorAll('.halaman').forEach(div => div.style.display = 'none');
+      document.getElementById(idTujuan).style.display = 'flex';
+    }
+
+    function cekJawaban(pilihan, jawabanBenar, halamanSalah, halamanBenar, terakhir = false) {
+      if (pilihan === jawabanBenar) {
+        if (terakhir) {
+          showPopup('Terharu, tapi boong', 3000);
+          setTimeout(() => keHalaman(halamanBenar), 3500);
+        } else {
+          keHalaman(halamanBenar);
+        }
+      } else {
+        showPopup();
+        setTimeout(() => keHalaman(halamanSalah), 1200);
+      }
+    }
+
+    const puzzleContainer = document.getElementById('puzzle');
+    const pieces = [...Array(9).keys()].map(i => `puzzle_pieces/piece${i}.png`);
+    let currentOrder = [...pieces];
+    let selectedIndex = null;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function renderPuzzle() {
+      puzzleContainer.innerHTML = '';
+      currentOrder.forEach((src, index) => {
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `Potongan ${index+1}`;
+        img.dataset.index = index;
+        img.draggable = true;
+        img.addEventListener('dragstart', e => {
+          e.dataTransfer.setData('text/plain', index);
+        });
+        img.addEventListener('dragover', e => e.preventDefault());
+        img.addEventListener('drop', e => {
+          const from = +e.dataTransfer.getData('text/plain');
+          const to = +e.target.dataset.index;
+          swapPieces(from, to);
+          renderPuzzle();
+          checkSolved();
+        });
+        img.addEventListener('click', () => {
+          if (selectedIndex === null) {
+            selectedIndex = index;
+            highlight(index);
+          } else {
+            swapPieces(selectedIndex, index);
+            selectedIndex = null;
+            renderPuzzle();
+            checkSolved();
+          }
+        });
+        puzzleContainer.appendChild(img);
+      });
+    }
+
+    function highlight(index) {
+      const imgs = puzzleContainer.querySelectorAll('img');
+      imgs.forEach(img => img.style.border = '2px solid white');
+      if (imgs[index]) imgs[index].style.border = '3px solid #ff69b4';
+    }
+
+    function swapPieces(i, j) {
+      [currentOrder[i], currentOrder[j]] = [currentOrder[j], currentOrder[i]];
+    }
+
+    function checkSolved() {
+      if (currentOrder.every((src, i) => src.endsWith(`piece${i}.png`))) {
+        showPopup('Pinter juga nyusun puzzle nya', 3000);
+        setTimeout(() => keHalaman('akhir'), 3500);
+      }
+    }
+
+    currentOrder = shuffle(currentOrder);
+    renderPuzzle();
+  </script>
+</body>
+</html>
